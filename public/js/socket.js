@@ -1,62 +1,63 @@
+// Instantiate socket.io object
 var socket = io();
+
+// Handles login when sending a message
 $('#messages-form').submit(function(){
   var message = $('#message').val();
+
+  // Validate user input
   if(message.length && message.trim().length) {
+
+    // Commands
     if(message.indexOf("/name") === 0) {
       if(!(message.split(" ")[1] === 'undefined')) {
         socket.emit('change nickname', message.split(" ")[1]);
         populateOnlineUsersList();
       }
     }
+
+    // Send message if no command
     else {
       var id = $('.opened').attr('data-id');
       var chatId = $('.opened').attr('id');
       socket.emit('chat message', $('#message').val(), id, chatId);
     }
 
+    // Clean the input
     $('#message').val('');
   }
   return false;
 });
 
+// User is typing logic TODO: Fix where to show 
 var searchTimeout;
 document.getElementById('message').onkeypress = function (e) {
     var keyCode = e.keyCode || e.which;
-    if (keyCode === 13){
-
-    } else {
+    var timeout = 1000 // 1s
+    // If pressed key is not "ENTER"
+    if (!(keyCode === 13)) {
+      // Send notification that user is typing
       socket.emit('user is typing', $('#message').val());
+
       if (searchTimeout != undefined) clearTimeout(searchTimeout);
+
+      // If user has not entered any key in specified time, send notification
       searchTimeout = setTimeout(function() {
         socket.emit('user is not typing', $('#message').val());
-      }, 1000);
+      }, timeout);
     }
 };
 
+// Receiving messages logic
 socket.on('chat message', function(msg, username, color, id, chatId){
+  // Check if there is already opened tab for the current chat
   if($('#main-content').find('#' + chatId).length < 1) {
-    $('#main-content').find('.selected').removeClass('selected');
-    $('#main-content #tabs-header').append('<a href="javascript:;" class="open-tab selected" data-id="'+chatId+'">'+username+'<span class="close"></span></a>');
-    $('#main-content').find('.opened').hide().removeClass('opened');
-    $('#main-content').append('<ul class="messages opened" data-Id="'+id+'" id="'+chatId+'"></ul>').show();
-    
-    $('.close').click(function() {
-      $('#main-content #tabs-header').children().first().addClass('selected');
-      $('#main-content').find('#all').show().addClass('opened');
-      $('#main-content').find('#'+id).remove();
-      $(this).parent().remove();
-    });
-
-    $('.open-tab').click(function() {
-        if(!($(this) === $('#main-content').find('.selected'))) {
-          $('#main-content').find('.selected').removeClass('selected');
-          $(this).addClass('selected');
-          $('#main-content').find('.opened').hide().removeClass('opened');
-          $('#' + $(this).attr('data-id')).addClass('opened').show();
-        }
-    });
+    // Switch current tab with the new one
+    switchTabs(username, chatId, id);
   }
 
+  // If there is already opened tab for the current chat
+  // Check if user is on current page
   if(!$('#message').is(":focus")) {
     $('#'+chatId).append($('<li class="notseen '+color+'">').text(username + ": " + msg));
     $('title').text("Chat (" + $('.notseen').length + ")");
@@ -68,29 +69,28 @@ socket.on('chat message', function(msg, username, color, id, chatId){
 
 });
 
+// Logic for new connection
 socket.on('user connected', function(msg){
   $('#all-messages').append($('<li>').text(msg));
   populateOnlineUsersList();
 });
 
+// Logic for disconnection
 socket.on('user disconnect', function(msg){
   populateOnlineUsersList();
 });
 
-socket.on('my message', function(msg){
-  $('#all-messages').append($('<li>').text("Private message: " + msg));
-});
-
+// Name change logic
 socket.on('name change', function() {
   populateOnlineUsersList();
 });
 
+// Show div when user is typing
 socket.on('user is typing', function(msg) {
   $('#user-is-typing').show();
-  //$("html, body").animate({ scrollTop: $(document).height() }, 1);
 });
 
+// Hide div when user is not typing
 socket.on('user is not typing', function(msg) {
   $('#user-is-typing').hide();
-  //$("html, body").animate({ scrollTop: $(document).height() }, 1);
 });

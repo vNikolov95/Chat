@@ -12,18 +12,24 @@
 body { 
 	font: 13px Helvetica, Arial;
 }
-form { 
+
+/*------------------------------------*\
+	MESSAGES FORM
+\*------------------------------------*/
+#messages-form { 
 	background: #000;
 	padding: 3px; 
 	position: fixed; 
 	bottom: 0; 
 	width: 100%;
+
 	input {
 		border: 0; 
 		padding: 10px; 
 		width: 90%; 
 		margin-right: .5%; 
 	}
+
 	button {
 		width: 9%; 
 		background: rgb(130, 224, 255); 
@@ -31,6 +37,10 @@ form {
 		padding: 10px; 
 	}
 }
+
+/*------------------------------------*\
+	ONLINE USERS PANEL
+\*------------------------------------*/
 #online-users-panel {
 	position: fixed;
 	display: inline-block;
@@ -63,6 +73,10 @@ form {
 		background: #eee; 
 	}
 }
+
+/*------------------------------------*\
+	MAIN CONTENT
+\*------------------------------------*/
 #main-content {
 	margin: 0; 
 	padding: 0; 
@@ -130,6 +144,9 @@ form {
 	left: 0;
 }
 
+/*------------------------------------*\
+	MESSSAGES COLOR
+\*------------------------------------*/
 .color {
 	&-1 {
 		color: @orange;

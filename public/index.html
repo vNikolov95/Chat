@@ -22,21 +22,8 @@
       <input id="message" autocomplete="off" /><button>Send</button>
     </form>
     <script src="/socket.io/socket.io.js"></script>
+    <script src="js/functions.js"></script>
     <script src="js/socket.js"></script>
     <script src="js/scripts.js"></script>
-    <script>
-      $(document).ready(function() {
-        
-        populateOnlineUsersList();
-        $('.open-tab').click(function() {
-            if(!($(this) === $('#main-content').find('.selected'))) {
-              $('#main-content').find('.selected').removeClass('selected');
-              $(this).addClass('selected');
-              $('#main-content').find('.opened').hide().removeClass('opened');
-              $('#' + $(this).attr('data-id')).addClass('opened').show();
-            }
-        });
-      });
-    </script>
   </body>
 </html>
