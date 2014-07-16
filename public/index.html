@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Chat</title>
+    <link rel=stylesheet href="css/styles.css" />
+    <script src='http://code.jquery.com/jquery-1.8.0.min.js' type='text/javascript'></script>
+    <script src="//code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
+  </head>
+  <body>
+    <div id="main-content">
+      <div id="tabs-header">
+        <a href="javascript:;" data-id="all" class="open-tab selected">All messages</a>
+      </div>
+      <ul class="messages opened" data-id="all" id="all"></ul>
+    </div>
+    <div id="online-users-panel">
+      <h3>Online users</h3>
+      <ul id="online-users-list"></ul>
+    </div>
+    <span id="user-is-typing" style="display: none;">User is typing</span>
+    <form id="messages-form">
+      <input id="message" autocomplete="off" /><button>Send</button>
+    </form>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="js/socket.js"></script>
+    <script src="js/scripts.js"></script>
+    <script>
+      $(document).ready(function() {
+        
+        populateOnlineUsersList();
+        $('.open-tab').click(function() {
+            if(!($(this) === $('#main-content').find('.selected'))) {
+              $('#main-content').find('.selected').removeClass('selected');
+              $(this).addClass('selected');
+              $('#main-content').find('.opened').hide().removeClass('opened');
+              $('#' + $(this).attr('data-id')).addClass('opened').show();
+            }
+        });
+      });
+    </script>
+  </body>
+</html>
